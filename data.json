@@ -1,0 +1,162 @@
+[
+  {
+    name: "Country",
+    isMultiSelectEnabled: true,
+    filterItems: [
+      {
+        name: "Australia",
+        childItems: [
+          {
+            name: 'Australian Capital Territory'
+          },
+          {
+            name: "Queensland"
+          },
+          {
+            name: "South Australia"
+          },
+          {
+            name: "Western Australia"
+          }
+        ]
+      },
+      {
+        name: "Austria",
+        childItems: [
+          {
+            name: "Vienna"
+          },
+          {
+            name: "Upper Austria"
+          }
+        ]
+      },
+      {
+        name: "Belgium"
+      },
+      {
+        name: "Canada"
+      },
+      {
+        name: "China"
+      }
+    ]
+  },
+  {
+    name: "Disciplines",
+    isMultiSelectEnabled: true,
+    filterItems: [
+      {
+        name: "Agriculture",
+      },
+      {
+        name: 'Anthropology and Archaeology'
+      },
+      {
+        name: 'Architecture'
+      },
+      {
+        name: "Arts"
+      },
+      {
+        name: "Biology"
+      },
+      {
+        name: "Business and Management"
+      },
+      {
+        name: "Chemistry"
+      },
+      {
+        name: "Computer Science"
+      },
+      {
+        name: "Design"
+      },
+      {
+        name: "Divinity and Religion"
+      }
+    ]
+  },
+  {
+    name: "Degrees",
+    isMultiSelectEnabled: true,
+    filterItems: [
+      {
+        name: "Masters"
+      },
+      {
+        name: "Bachelors"
+      },
+      {
+        name: "Doctorate"
+      },
+      {
+        name: "Associate"
+      },
+      {
+        name: "Professional Certificate"
+      },
+      {
+        name: "Diploma"
+      },
+      {
+        name: "Post Graduate Diploma"
+      },
+      {
+        name: "Graduate Certificate"
+      },
+    ]
+  },
+  {
+    name: "Tuition Fee",
+    isMultiSelectEnabled: false,
+    filterItems: [
+      {
+        name: "All"
+      },
+      {
+        name: "30,000 USD/Year or less"
+      },
+      {
+        name: "50,000 USD/Year or less"
+      },
+      {
+        name: "70,000 USD/Year or less"
+      },
+      {
+        name: "90,000 USD/Year or less"
+      },
+      {
+        name: "More than 90,000 USD/Year"
+      }
+    ]
+  },
+  {
+    name: "Partnership Type",
+    isMultiSelectEnabled: true,
+    filterItems: [
+      {
+        name: "Partner"
+      },
+      {
+        name: "Non Partner"
+      }
+    ]
+  },
+  {
+    name: "Saudi Arabian Ministry of Education",
+    isMultiSelectEnabled: false,
+    filterItems: [
+      {
+        name: "All"
+      },
+      {
+        name: "Approved"
+      },
+      {
+        name: "Not Approved"
+      }
+    ]
+  }
+]

@@ -1,17 +1,44 @@
 <!DOCTYPE html>
 <html lang="">
-  <head>
+<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
     <title><%= htmlWebpackPlugin.options.title %></title>
-  </head>
-  <body>
-    <noscript>
-      <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
-    </noscript>
-    <div id="app"></div>
-    <!-- built files will be auto injected -->
-  </body>
+    <link rel="preload" href="assets/font-montserrat/montserrat-v14-latin-300.woff2" as="font"
+          crossorigin="anonymous">
+    <link rel="preload" href="assets/font-montserrat/montserrat-v14-latin-300.eot" as="font"
+          crossorigin="anonymous">
+    <link rel="preload" href="assets/font-montserrat/montserrat-v14-latin-300.eot?#iefix"
+          as="font" crossorigin="anonymous">
+    <link rel="preload" href="assets/font-montserrat/montserrat-v14-latin-300.woff" as="font"
+          crossorigin="anonymous">
+    <link rel="preload" href="assets/font-montserrat/montserrat-v14-latin-300.ttf" as="font"
+          crossorigin="anonymous">
+    <link rel="preload" href="assets/font-montserrat/montserrat-v14-latin-300.svg#Montserrat"
+          as="font" crossorigin="anonymous">
+    <link rel="preload" href="assets/font-montserrat/montserrat-v14-latin-regular.woff2"
+          as="font" crossorigin="anonymous">
+    <link rel="preload" href="assets/font-montserrat/montserrat-v14-latin-500.woff2" as="font"
+          crossorigin="anonymous">
+    <link rel="preload" href="assets/font-montserrat/montserrat-v14-latin-600.woff2" as="font"
+          crossorigin="anonymous">
+    <link rel="preload" href="assets/font-montserrat/montserrat-v14-latin-700.woff2" as="font"
+          crossorigin="anonymous">
+    <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/boxicons/css/boxicons.min.css" rel="stylesheet">
+    <link href="assets/fontawesome/font-awesome.min.css" rel="stylesheet">
+    <link href="assets/css/style.css" rel="stylesheet">
+</head>
+<body>
+<noscript>
+    <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled.
+        Please enable it to continue.</strong>
+</noscript>
+<div id="app"></div>
+<!-- built files will be auto injected -->
+<script src="assets/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>
