@@ -5,8 +5,20 @@ import router from '@/router';
 
 Vue.config.productionTip = false;
 
-new Vue({
-  store,
-  router,
-  render: h => h(App),
-}).$mount('#app');
+function initialiseVueApp() {
+
+  new Vue({
+    store,
+    router,
+    render: h => h(App),
+  }).$mount('#app');
+}
+
+/**
+ * Fetching available filters from api before initialising vue app
+ */
+store.dispatch("filterStore/fetchAvailableFilters").then(() => {
+  initialiseVueApp();
+}).catch(() => {
+  initialiseVueApp();
+});

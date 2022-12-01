@@ -133,13 +133,15 @@
           sortKey: "_score",
           sortDirection: ""
         },
-        searchText: "",
+        isInitialisation: true,
+        searchText: ""
       }
     },
     computed: {
-      ...mapGetters("filterStore", ["filters", "isFilterUpdated"]),
+      ...mapGetters("filterStore", ["filters", "isFilterUpdated", "availableFilters"]),
     },
     mounted() {
+      this.prepareAppliedFilters();
       if (this.$route.query.sort_key && this.$route.query.sort_key !== this.sorting.sortKey) {
         this.sorting.sortKey = this.$route.query.sort_key;
       }
@@ -148,20 +150,20 @@
       }
       if (this.$route.query.search_text)
         this.searchText = this.$route.query.search_text;
-      this.getUniversities();
     },
     watch: {
       isFilterUpdated() {
+        console.log(this.isFilterUpdated);
         if (this.isFilterUpdated) {
           this.appliedFilters = _.flatMapDeep(this.filters, item => {
             return item;
           });
-          this.getUniversities();
+          this.getUniversities(!this.isInitialisation);
         }
       },
       searchText() {
         if (this.$route.query.search_text !== this.searchText)
-          this.updateRouter();
+          this.getUniversities(true);
       },
       $route(to) {
         console.log(to);
@@ -174,11 +176,13 @@
        * @author Jithin Vijayan
        * @returns {Promise<void>}
        */
-      async getUniversities() {
+      async getUniversities(isUpdateRouter = false) {
         this.isLoading = 1;
         const queryParams = {};
         if (this.$route.query.sort_key) {
           queryParams.sort_key = this.$route.query.sort_key;
+        } else {
+          queryParams.sort_key = "_score";
         }
         if (this.$route.query.sort_direction) {
           queryParams.sort_direction = this.$route.query.sort_direction;
@@ -191,6 +195,12 @@
             return item.value
           })
         });
+        if (!_.isEmpty(queryParams) && isUpdateRouter)
+          this.$router.push({
+            path: '/',
+            query: queryParams
+          });
+        this.isInitialisation = false;
         axios.get("https://run.mocky.io/v3/a1f1748f-bffb-4f55-9fcc-be7ca3f369e1", {
           params: queryParams
         })
@@ -220,7 +230,7 @@
           this.sorting.sortDirection = !this.sorting.sortDirection || this.sorting.sortDirection === 'DESC' ? "ASC" : "DESC";
         } else
           this.sorting.sortDirection = "";
-        this.updateRouter()
+        this.getUniversities(true);
       },
       getSortingIcon(value) {
         if (this.sorting.sortDirection === "DESC" && this.sorting.sortKey === value) {
@@ -230,26 +240,62 @@
         }
         return "fa-sort";
       },
-      updateRouter() {
-        let query = {};
-        if (this.sorting.sortKey)
-          query.sort_key = this.sorting.sortKey;
-        if (this.sorting.sortDirection)
-          query.sort_direction = this.sorting.sortDirection;
-        if (this.searchText)
-          query.search_text = this.searchText;
-        this.$router.push({
-          path: '/',
-          query: query
-        });
-        this.getUniversities();
-      },
       clearText() {
         this.searchText = "";
       },
       searchNow() {
         if (this.searchText)
-          this.getUniversities();
+          this.getUniversities(true);
+      },
+      async prepareAppliedFilters() {
+        const flatFilters = [];
+        await _.each(this.availableFilters, category => {
+          _.each(category.filterItems, filter => {
+            if (filter.childItems) {
+              _.each(filter.childItems, child => {
+                flatFilters.push({
+                  key: category.childValue,
+                  name: child.name,
+                  value: child.value
+                });
+              })
+            }
+            flatFilters.push({
+              key: category.value,
+              name: filter.name,
+              value: filter.value
+            });
+          })
+        });
+        if (flatFilters.length > 0) {
+          const appliedFilters = {};
+          await _.each(this.$route.query, (queryItem, key) => {
+            if (queryItem instanceof Array) {
+              _.each(queryItem, item => {
+                const found = _.find(flatFilters, filter => {
+                  return filter.value === item
+                });
+                if (found !== undefined && appliedFilters[key]) {
+                  appliedFilters[key] = [...appliedFilters[key], found];
+                } else if (found !== undefined) {
+                  appliedFilters[key] = [found];
+                }
+
+              })
+            } else {
+              const found = _.find(flatFilters, item => {
+                return item.value === queryItem
+              });
+              if (found !== undefined && appliedFilters[key])
+                appliedFilters[key] = [...appliedFilters[key], found];
+              else if (found !== undefined) {
+                appliedFilters[key] = [found];
+              }
+            }
+          });
+          if (!_.isEmpty(appliedFilters))
+            await store.dispatch("filterStore/initialiseAppliedFilters", appliedFilters);
+        }
       }
     }
   }
