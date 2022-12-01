@@ -8,6 +8,10 @@
 </template>
 
 <script>
+  import {mapGetters} from "vuex";
+  import store from '../../store';
+  import _ from 'lodash';
+
   export default {
     name: "FilterCategoryItemChild",
     props: {
@@ -29,13 +33,25 @@
         selectedChildValue: false
       }
     },
+    computed: {
+      ...mapGetters("filterStore", ["filters"]),
+    },
+    mounted() {
+      if (this.checkFilterAlreadyApplied() !== -1) {
+        this.selectedChildValue = true;
+      }
+    },
     methods: {
       triggerChange(filter) {
-        let query = {};
+        let query = {
+          "key": this.childFilterValue,
+          "value": filter.value
+        };
         if (this.selectedChildValue) {
-          query[this.childFilterValue] = filter.value;
+          store.dispatch("filterStore/addFilterItems", query);
+        } else {
+          store.dispatch("filterStore/removeFilterItem", query);
         }
-        console.log(query);
       },
       generateName(value) {
         let newValue = value.replaceAll(" ", "_");
@@ -44,7 +60,15 @@
       generateId(value) {
         let newValue = value.replaceAll(" ", "_");
         return newValue.toLowerCase() + "_" + this.index;
-      }
+      },
+      checkFilterAlreadyApplied() {
+        if (this.filters[this.childFilterValue]&&this.filters[this.childFilterValue].length) {
+          return _.findIndex(this.filters[this.childFilterValue], value => {
+            return this.filter.value === value;
+          });
+        }
+        return -1;
+      },
     }
   }
 </script>

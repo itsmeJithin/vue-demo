@@ -18,7 +18,7 @@
                    aria-hidden="true"></i>
             </div>
         </div>
-        <div class="child-items" v-if="isActionEnabled">
+        <div class="child-items" v-if="isActionEnabled && availableChildItems.length>0">
             <div class="search-bar">
                 <input type="text" class="search-input" placeholder="Search" v-model="searchFilter">
                 <div class="clear-icon-container">
@@ -37,6 +37,8 @@
   import _ from "lodash";
   import FilterCategoryItemChild from './FilterCategoryItemChild';
   import Fuse from "fuse.js";
+  import store from "./../../store";
+  import {mapGetters} from 'vuex';
 
   export default {
     name: "FilterCategoryItem",
@@ -84,6 +86,9 @@
         fuseInstance: null
       }
     },
+    computed: {
+      ...mapGetters("filterStore", ["filters"]),
+    },
     mounted() {
       if (this.filter.childItems && this.filter.childItems.length > 0) {
         this.availableChildItems = _.cloneDeep(this.filter.childItems);
@@ -98,9 +103,11 @@
             "name"
           ]
         };
-        this.fuseInstance = new Fuse(this.filter.childItems, options)
+        this.fuseInstance = new Fuse(this.filter.childItems, options);
+        if (this.checkFilterAlreadyApplied() !== -1) {
+          this.selectedValue = true;
+        }
       }
-
     },
     watch: {
       /**
@@ -117,12 +124,22 @@
         }
       },
       selectedValue() {
-        let query = {};
-        if (this.selectedValue) {
-          query[this.filterValue] = this.filter.value;
-          this.isActionEnabled = true;
+        /**
+         * removing duplicate query params and avoiding unwanted api calls
+         */
+        if (this.checkFilterAlreadyApplied() !== -1) {
+          return;
         }
-        console.log(query);
+        let query = {
+          "key": this.filterValue,
+          "value": this.filter.value
+        };
+        if (this.selectedValue) {
+          this.isActionEnabled = true;
+          store.dispatch("filterStore/addFilterItems", query);
+        } else {
+          store.dispatch("filterStore/removeFilterItem", query);
+        }
       },
     },
     methods: {
@@ -136,7 +153,15 @@
       generateId(value) {
         let newValue = value.replaceAll(" ", "_");
         return newValue.toLowerCase() + "_" + this.index;
-      }
+      },
+      checkFilterAlreadyApplied() {
+        if (this.filters[this.filterValue]&&this.filters[this.filterValue].length) {
+          return _.findIndex(this.filters[this.filterValue], value => {
+            return this.filter.value === value;
+          });
+        }
+        return -1;
+      },
     }
   }
 </script>
