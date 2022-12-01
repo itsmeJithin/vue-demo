@@ -3,7 +3,7 @@
         <HeaderComponent/>
         <div class="main p-3">
             <div class="container">
-                <HomePage/>
+                <component :is="dynamicComponent"/>
             </div>
         </div>
     </div>
@@ -18,6 +18,43 @@
     components: {
       HomePage,
       HeaderComponent
+    },
+    data() {
+      return {
+        dynamicComponent: HomePage,
+      }
+    },
+    computed: {
+      routeMetaData() {
+        return this.$router.currentRoute.meta
+      }
+    },
+    mounted() {
+      this.findComponent();
+    },
+    watch: {
+      $route(to) {
+        this.findComponent(to.meta);
+      }
+    },
+    methods: {
+      findComponent(metaData) {
+        const data = metaData || this.routeMetaData;
+        if (data) {
+          const {code: menuCode} = data;
+          switch (menuCode) {
+            case "HOME": {
+              this.dynamicComponent = HomePage;
+              break;
+            }
+            case "UNIVERSITY_DETAILS":
+              this.dynamicComponent = HomePage;
+              break;
+            default:
+              this.dynamicComponent = null;
+          }
+        }
+      }
     }
   }
 </script>

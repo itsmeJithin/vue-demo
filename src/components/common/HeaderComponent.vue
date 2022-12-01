@@ -42,7 +42,7 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link nav-icon" href="#">
-                        <button class="btn btn-primary">Register</button>
+                        <button class="btn btn-primary primary-btn">Register</button>
                     </a>
                 </li>
 

@@ -15,16 +15,16 @@
                     </nav>
                 </div>
                 <div class="input-group">
-                    <input class="form-control border-end-0 border" type="text" id="example-search-input"
-                           placeholder="Search for an institute or a course">
+                    <input class="form-control border-end-0 border search-box" type="text" id="example-search-input"
+                           placeholder="Search for an institute or a course" v-model="searchText" autocomplete="off">
                     <span class="input-group-append">
-                <button class="btn btn-outline-secondary bg-white border-start-0 border-end-0 input-group-btn-white border ms-n5"
-                        type="button">
-                        <i class="fa fa-times"></i>
+                    <button class="btn btn-outline-secondary bg-white border-start-0 border-end-0 input-group-btn-white border ms-n5"
+                            type="button" @click.prevent="clearText()">
+                        <i class="fa" :class="this.searchText?'fa-times':''"></i>
                     </button>
                     <button class="btn btn-outline-secondary bg-white border-start-0 input-group-btn-white border ms-n5"
-                            type="button">
-                        <i class="fa fa-search"></i>
+                            type="button" @click.prevent="searchNow()">
+                        <i class="fa fa-search" :class="!this.searchText?'color-gray':''"></i>
                     </button>
                 </span>
                 </div>
@@ -42,17 +42,27 @@
                     </div>
                     <div class="col-6">
                         <div class="btn-group pull-right" role="group" aria-label="Basic example">
-                            <button type="button" class="btn btn-sm btn-outline-secondary bg-white btn-normal active">
+                            <button type="button" class="btn btn-sm btn-outline-secondary btn-normal"
+                                    :class="sorting.sortKey==='_score'?'active':''"
+                                    @click.prevent="toggleSorting('_score')">
                                 Best Match
                             </button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary bg-white btn-normal">
+                            <button type="button" class="btn btn-sm btn-outline-secondary btn-normal btn-border"
+                                    :class="sorting.sortKey==='best_rank'?'active':''"
+                                    @click.prevent="toggleSorting('best_rank')">
                                 Best Rank
                             </button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary bg-white btn-normal">
+                            <button type="button" class="btn btn-sm btn-outline-secondary btn-normal"
+                                    :class="sorting.sortKey==='acceptance_rate'?'active':''"
+                                    @click.prevent="toggleSorting('acceptance_rate')">
                                 Acceptance Rate
+                                <i class="fa fa-sort ms-1" :class="getSortingIcon('acceptance_rate')"></i>
                             </button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary bg-white btn-normal">
+                            <button type="button" class="btn btn-sm btn-outline-secondary btn-normal"
+                                    :class="sorting.sortKey==='tuition_fee'?'active':''"
+                                    @click.prevent="toggleSorting('tuition_fee')">
                                 Tuition Fee
+                                <i class="fa fa-sort ms-1" :class="getSortingIcon('tuition_fee')"></i>
                             </button>
                         </div>
                     </div>
@@ -105,16 +115,53 @@
         totalRecords: 0,
         recordsPerPage: 17,
         totalCourses: 0,
-        isLoading: -1
+        isLoading: -1,
+        sorting: {
+          sortKey: "_score",
+          sortDirection: ""
+        },
+        searchText: ""
       }
     },
     mounted() {
+      if (this.$route.query.sort_key && this.$route.query.sort_key !== this.sorting.sortKey) {
+        this.sorting.sortKey = this.$route.query.sort_key;
+      }
+      if (this.$route.query.sort_direction && this.$route.query.sort_direction !== this.sorting.sortDirection) {
+        this.sorting.sortDirection = this.$route.query.sort_direction;
+      }
+      if (this.$route.query.search_text)
+        this.searchText = this.$route.query.search_text;
       this.getUniversities();
     },
+    watch: {
+      searchText() {
+        if (this.$route.query.search_text !== this.searchText)
+          this.updateRouter();
+      }
+    },
     methods: {
+      /**
+       * fetching universities and details
+       *
+       * @author Jithin Vijayan
+       * @returns {Promise<void>}
+       */
       async getUniversities() {
         this.isLoading = 1;
-        axios.get("https://run.mocky.io/v3/7e145c6d-3f1d-4c6a-bbfb-cd1c2e878820")
+        const queryParams = {};
+        if (this.$route.query.sort_key) {
+          queryParams.sort_key = this.$route.query.sort_key;
+        }
+        if (this.$route.query.sort_direction) {
+          queryParams.sort_direction = this.$route.query.sort_direction;
+        }
+        if (this.$route.query.search_text) {
+          queryParams.search_text = this.$route.query.search_text;
+        }
+        axios.get("https://run.mocky.io/v3/7e145c6d-3f1d-4c6a-bbfb-cd1c2e878820", {
+          params: queryParams
+        })
           .then(response => {
             this.isLoading = 0;
             if (response.data) {
@@ -130,6 +177,45 @@
             this.isLoading = 0;
             console.log(error);
           });
+      },
+      toggleSorting(value) {
+        if (this.sorting.sortKey === value && (value === '_score' || value === 'best_rank'))
+          return;
+        this.sorting.sortKey = value;
+        if (value !== '_score' && value !== 'best_rank') {
+          this.sorting.sortDirection = !this.sorting.sortDirection || this.sorting.sortDirection === 'DESC' ? "ASC" : "DESC";
+        } else
+          this.sorting.sortDirection = "";
+        this.updateRouter()
+      },
+      getSortingIcon(value) {
+        if (this.sorting.sortDirection === "DESC" && this.sorting.sortKey === value) {
+          return "fa-sort-desc";
+        } else if (this.sorting.sortDirection === "ASC" && this.sorting.sortKey === value) {
+          return "fa-sort-asc";
+        }
+        return "fa-sort";
+      },
+      updateRouter() {
+        let query = {};
+        if (this.sorting.sortKey)
+          query.sort_key = this.sorting.sortKey;
+        if (this.sorting.sortDirection)
+          query.sort_direction = this.sorting.sortDirection;
+        if (this.searchText)
+          query.search_text = this.searchText;
+        this.$router.push({
+          path: '/',
+          query: query
+        });
+        this.getUniversities();
+      },
+      clearText() {
+        this.searchText = "";
+      },
+      searchNow() {
+        if (this.searchText)
+          this.getUniversities();
       }
     }
   }

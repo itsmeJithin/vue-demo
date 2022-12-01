@@ -2,7 +2,7 @@
     <div class="filter-group-items">
         <div class="filter-group-item">
             <div class="form-check">
-                <input type="checkbox" class="form-check-input cursor-pointer"
+                <input type="checkbox" class="form-check-input form-check-box cursor-pointer"
                        v-if="isMultiSelectEnabled"
                        :id="generateId(categoryName)">
                 <input class="form-check-input cursor-pointer" type="radio"

@@ -31,7 +31,9 @@
                         <div class="item">
                             <i class="bi bi-person-check-fill"></i>
                             <div class="data">
-                                <div class="value">{{university.stats.acceptance_rate}}%</div>
+                                <div class="value">
+                                    {{university.stats.acceptance_rate?university.stats.acceptance_rate+'%':'-'}}
+                                </div>
                                 <div class="label">Acceptance Rate</div>
                             </div>
                         </div>
