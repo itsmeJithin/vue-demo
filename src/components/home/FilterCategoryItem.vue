@@ -130,7 +130,6 @@
         this.verifyAndToggleValues();
       },
       selectedValue() {
-        console.log(this.selectedValue);
         /**
          * removing duplicate query params and avoiding unwanted api calls
          */
@@ -144,7 +143,6 @@
           "name": this.filter.name,
           "isMultiSelectEnabled": this.isMultiSelectEnabled
         };
-        console.log(query);
         if (this.selectedValue && this.filter.value !== "") {
           this.isActionEnabled = true;
           store.dispatch("filterStore/addFilterItems", query);

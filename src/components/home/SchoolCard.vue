@@ -1,5 +1,5 @@
 <template>
-    <div class="card p-3">
+    <div class="card p-3" @click.prevent="viewUniversityDetails">
         <div class="school-container">
             <div class="school-container-header">
                 <div class="left">
@@ -72,6 +72,15 @@
       },
       getRank() {
         return _.get(this.university.rank, 'isc_global.max');
+      },
+      viewUniversityDetails() {
+        this.$router.push({
+          name: 'universities',
+          params: {
+            country: this.university.address.country_code.toLowerCase(),
+            university: this.university.slug
+          }
+        })
       }
     }
   }

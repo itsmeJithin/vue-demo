@@ -12,6 +12,7 @@
 <script>
   import HeaderComponent from './components/common/HeaderComponent';
   import HomePage from './pages/HomePage';
+  import UniversityDetailsPage from './pages/UniversityDetailsPage';
 
   export default {
     name: 'App',
@@ -48,7 +49,7 @@
               break;
             }
             case "UNIVERSITY_DETAILS":
-              this.dynamicComponent = HomePage;
+              this.dynamicComponent = UniversityDetailsPage;
               break;
             default:
               this.dynamicComponent = null;
