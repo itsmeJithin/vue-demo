@@ -1,3 +1,4 @@
+import Vue from "vue";
 import _ from "lodash";
 import axios from 'axios';
 
@@ -5,6 +6,7 @@ export default {
   namespaced: true,
   state: {
     filters: {},
+    filtersLastModified: null,
     isFilterUpdated: false,
     availableFilters: []
   },
@@ -15,8 +17,24 @@ export default {
     isFilterUpdated(state) {
       return state.isFilterUpdated;
     },
+    filtersLastModified(state) {
+      return state.filtersLastModified;
+    },
     availableFilters(state) {
       return state.availableFilters;
+    },
+    isFilterApplied: (state) => (key, value) => {
+      if (state.filters[key] && state.filters[key].length) {
+        return _.findIndex(state.filters[key], item => {
+          return String(value) === String(item.value);
+        });
+      }
+      return -1;
+    },
+    getAppliedFilters: (state) => () => {
+      return _.flatMapDeep(state.filters, item => {
+        return item;
+      });
     }
   },
   mutations: {
@@ -25,36 +43,48 @@ export default {
     },
     setFilters(state, filter) {
       if (state.filters[filter.key]) {
-        state.filters[filter.key] = [...state.filters[filter.key], filter];
+        if (!filter.isMultiSelectEnabled) {
+          console.log(filter);
+          Vue.set(state.filters, filter.key, [filter]);
+        } else {
+          Vue.set(state.filters, filter.key, [...state.filters[filter.key], filter]);
+        }
       } else {
-        state.filters[filter.key] = [filter];
-        console.log(state.filters);
+        Vue.set(state.filters, filter.key, [filter]);
       }
-      state.isFilterUpdated = true;
+      Vue.set(state, 'isFilterUpdated', true);
+      Vue.set(state, 'filtersLastModified', Date.now());
     },
     removeFilterItem(state, filter) {
       const filterItem = state.filters[filter.key];
+      const isMultiSelectEnabled = _.has(filter, "isMultiSelectEnabled") ? filter.isMultiSelectEnabled : 1;
       if (filterItem) {
         _.remove(filterItem, item => {
-          return item.value === filter.value;
+          return (item.key === filter.key && !isMultiSelectEnabled) || (item.value === filter.value);
         });
         if (filterItem.length === 0) {
-          delete state.filters[filter.key];
+          const stateFilters = _.cloneDeep(state.filters);
+          delete stateFilters[filter.key];
+          Vue.set(state, 'filters', stateFilters);
         } else {
-          state.filters[filter.key] = filterItem;
+          Vue.set(state.filters, filter.key, filterItem);
         }
-        state.isFilterUpdated = true;
+        Vue.set(state, 'filtersLastModified', Date.now());
       }
     },
+    setFilterChangeFlag(state) {
+      Vue.set(state, 'isFilterUpdated', true);
+    },
     resetFilterChangeFlag(state) {
-      state.isFilterUpdated = false;
+      Vue.set(state, 'isFilterUpdated', false);
     },
     setAvailableFilters(state, filters) {
-      state.availableFilters = filters;
+      Vue.set(state, 'availableFilters', filters);
     },
     initialiseAppliedFilters(state, filters) {
-      state.filters = filters;
-      state.isFilterUpdated = true;
+      Vue.set(state, 'filters', filters);
+      Vue.set(state, 'isFilterUpdated', true);
+      Vue.set(state, 'filtersLastModified', Date.now());
     }
   },
   actions: {
@@ -67,8 +97,12 @@ export default {
     resetFilters({commit}) {
       commit('clearFilters');
     },
+    setFilterChangeFlag({commit}) {
+      commit('setFilterChangeFlag');
+    },
     removeFilterItem({commit}, item) {
       commit('removeFilterItem', item);
+      commit('setFilterChangeFlag');
     },
     resetFilterChangeFlag({commit}) {
       commit('resetFilterChangeFlag');

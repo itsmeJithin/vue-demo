@@ -30,7 +30,8 @@
                 </div>
             </div>
             <div class="col-12 mt-2">
-                <span class="fs-13">You found <b>{{totalRecords}}</b> institutes and <b>{{totalCourses}}</b> courses</span>
+                <span class="fs-13" v-if="isLoading===1"><b>Looking for institutes...</b></span>
+                <span class="fs-13" v-else>You found <b>{{totalRecords}}</b> institutes and <b>{{totalCourses}}</b> courses</span>
             </div>
             <div class="col-12">
                 <hr/>
@@ -134,11 +135,11 @@
           sortDirection: ""
         },
         isInitialisation: true,
-        searchText: ""
+        searchText: "",
       }
     },
     computed: {
-      ...mapGetters("filterStore", ["filters", "isFilterUpdated", "availableFilters"]),
+      ...mapGetters("filterStore", ["filters", "filtersLastModified", "availableFilters"]),
     },
     mounted() {
       this.prepareAppliedFilters();
@@ -152,21 +153,13 @@
         this.searchText = this.$route.query.search_text;
     },
     watch: {
-      isFilterUpdated() {
-        console.log(this.isFilterUpdated);
-        if (this.isFilterUpdated) {
-          this.appliedFilters = _.flatMapDeep(this.filters, item => {
-            return item;
-          });
-          this.getUniversities(!this.isInitialisation);
-        }
+      filtersLastModified() {
+        this.appliedFilters = this.$store.getters['filterStore/getAppliedFilters']();
+        this.getUniversities(!this.isInitialisation);
       },
       searchText() {
         if (this.$route.query.search_text !== this.searchText)
           this.getUniversities(true);
-      },
-      $route(to) {
-        console.log(to);
       }
     },
     methods: {
@@ -179,13 +172,13 @@
       async getUniversities(isUpdateRouter = false) {
         this.isLoading = 1;
         const queryParams = {};
-        if (this.$route.query.sort_key) {
-          queryParams.sort_key = this.$route.query.sort_key;
+        if (this.sorting.sortKey) {
+          queryParams.sort_key = this.sorting.sortKey;
         } else {
           queryParams.sort_key = "_score";
         }
-        if (this.$route.query.sort_direction) {
-          queryParams.sort_direction = this.$route.query.sort_direction;
+        if (this.sorting.sortDirection) {
+          queryParams.sort_direction = this.sorting.sortDirection;
         }
         if (this.$route.query.search_text) {
           queryParams.search_text = this.$route.query.search_text;
@@ -263,7 +256,7 @@
             flatFilters.push({
               key: category.value,
               name: filter.name,
-              value: filter.value
+              value: String(filter.value)
             });
           })
         });
@@ -284,7 +277,7 @@
               })
             } else {
               const found = _.find(flatFilters, item => {
-                return item.value === queryItem
+                return item.value === queryItem && item.key === key;
               });
               if (found !== undefined && appliedFilters[key])
                 appliedFilters[key] = [...appliedFilters[key], found];
@@ -295,6 +288,8 @@
           });
           if (!_.isEmpty(appliedFilters))
             await store.dispatch("filterStore/initialiseAppliedFilters", appliedFilters);
+          else
+            this.getUniversities();
         }
       }
     }

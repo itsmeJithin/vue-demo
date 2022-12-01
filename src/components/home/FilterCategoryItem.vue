@@ -4,11 +4,14 @@
             <div class="form-check">
                 <input type="checkbox" class="form-check-input form-check-box cursor-pointer"
                        v-if="isMultiSelectEnabled"
-                       :id="generateId(categoryName)" v-model="selectedValue">
+                       :id="generateId(categoryName)"
+                       v-model="selectedValue">
                 <input class="form-check-input cursor-pointer" type="radio"
                        :name="generateName(categoryName)"
                        :id="generateId(categoryName)"
-                       :value="filter.value"
+                       :value="true"
+                       :checked="this.selectedValue||this.filter.value===''?'checked':''"
+                       @change="toggleRadioBtnValue"
                        v-else>
                 <label class="form-check-label" :for="generateId(categoryName)">{{filter.name}}</label>
             </div>
@@ -87,7 +90,7 @@
       }
     },
     computed: {
-      ...mapGetters("filterStore", ["filters"]),
+      ...mapGetters("filterStore", ["filters", "filtersLastModified"]),
     },
     mounted() {
       if (this.filter.childItems && this.filter.childItems.length > 0) {
@@ -104,10 +107,10 @@
           ]
         };
         this.fuseInstance = new Fuse(this.filter.childItems, options);
-        if (this.checkFilterAlreadyApplied() !== -1) {
-          this.selectedValue = true;
-        }
       }
+      _.defer(() => {
+        this.verifyAndToggleValues(true);
+      })
     },
     watch: {
       /**
@@ -123,19 +126,26 @@
           this.availableChildItems = _.cloneDeep(this.filter.childItems);
         }
       },
+      filtersLastModified() {
+        this.verifyAndToggleValues();
+      },
       selectedValue() {
+        console.log(this.selectedValue);
         /**
          * removing duplicate query params and avoiding unwanted api calls
          */
-        if (this.checkFilterAlreadyApplied() !== -1) {
+        const value = this.$store.getters['filterStore/isFilterApplied'](this.filterValue, this.filter.value);
+        if (value !== -1 && this.selectedValue) {
           return;
         }
         let query = {
           "key": this.filterValue,
           "value": this.filter.value,
-          "name": this.filter.name
+          "name": this.filter.name,
+          "isMultiSelectEnabled": this.isMultiSelectEnabled
         };
-        if (this.selectedValue) {
+        console.log(query);
+        if (this.selectedValue && this.filter.value !== "") {
           this.isActionEnabled = true;
           store.dispatch("filterStore/addFilterItems", query);
         } else {
@@ -144,6 +154,17 @@
       },
     },
     methods: {
+      toggleRadioBtnValue(e) {
+        this.selectedValue = e.target.value;
+      },
+      verifyAndToggleValues(fromMounted = false) {
+        const value = this.$store.getters['filterStore/isFilterApplied'](this.filterValue, this.filter.value);
+        if (value !== -1 && fromMounted) {
+          this.selectedValue = true;
+        } else if (value === -1) {
+          this.selectedValue = false;
+        }
+      },
       toggleAction() {
         this.isActionEnabled = !this.isActionEnabled;
       },
@@ -154,15 +175,7 @@
       generateId(value) {
         let newValue = value.replaceAll(" ", "_");
         return newValue.toLowerCase() + "_" + this.index;
-      },
-      checkFilterAlreadyApplied() {
-        if (this.filters[this.filterValue] && this.filters[this.filterValue].length) {
-          return _.findIndex(this.filters[this.filterValue], item => {
-            return this.filter.value === item.value;
-          });
-        }
-        return -1;
-      },
+      }
     }
   }
 </script>

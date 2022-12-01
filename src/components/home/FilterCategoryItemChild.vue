@@ -34,12 +34,17 @@
       }
     },
     computed: {
-      ...mapGetters("filterStore", ["filters"]),
+      ...mapGetters("filterStore", ["filters", "filtersLastModified"]),
     },
     mounted() {
-      if (this.checkFilterAlreadyApplied() !== -1) {
-        this.selectedChildValue = true;
-      }
+      _.defer(() => {
+        this.verifyAndToggleValues(true);
+      })
+    },
+    watch: {
+      filtersLastModified() {
+        this.verifyAndToggleValues();
+      },
     },
     methods: {
       triggerChange(filter) {
@@ -54,6 +59,14 @@
           store.dispatch("filterStore/removeFilterItem", query);
         }
       },
+      verifyAndToggleValues(fromMounted = false) {
+        const value = this.$store.getters['filterStore/isFilterApplied'](this.childFilterValue, this.filter.value);
+        if (value !== -1 && fromMounted) {
+          this.selectedChildValue = true;
+        } else if (value === -1) {
+          this.selectedChildValue = false;
+        }
+      },
       generateName(value) {
         let newValue = value.replaceAll(" ", "_");
         return newValue.toLowerCase();
@@ -61,15 +74,7 @@
       generateId(value) {
         let newValue = value.replaceAll(" ", "_");
         return newValue.toLowerCase() + "_" + this.index;
-      },
-      checkFilterAlreadyApplied() {
-        if (this.filters[this.childFilterValue] && this.filters[this.childFilterValue].length) {
-          return _.findIndex(this.filters[this.childFilterValue], item => {
-            return this.filter.value === item.value;
-          });
-        }
-        return -1;
-      },
+      }
     }
   }
 </script>
