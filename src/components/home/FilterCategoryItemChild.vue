@@ -45,7 +45,8 @@
       triggerChange(filter) {
         let query = {
           "key": this.childFilterValue,
-          "value": filter.value
+          "value": filter.value,
+          "name": this.filter.name
         };
         if (this.selectedChildValue) {
           store.dispatch("filterStore/addFilterItems", query);
@@ -62,9 +63,9 @@
         return newValue.toLowerCase() + "_" + this.index;
       },
       checkFilterAlreadyApplied() {
-        if (this.filters[this.childFilterValue]&&this.filters[this.childFilterValue].length) {
-          return _.findIndex(this.filters[this.childFilterValue], value => {
-            return this.filter.value === value;
+        if (this.filters[this.childFilterValue] && this.filters[this.childFilterValue].length) {
+          return _.findIndex(this.filters[this.childFilterValue], item => {
+            return this.filter.value === item.value;
           });
         }
         return -1;

@@ -38,7 +38,16 @@
             <div class="col-12">
                 <div class="row">
                     <div class="col-6">
-                        <span class="fs-13">Filters:</span>
+                        <div class="applied-filters">
+                            <div class="filter-items">
+                                <div class="filter-title">
+                                    Filters:
+                                </div>
+                                <AppliedFilterComponent v-for="filter in appliedFilters"
+                                                        :key="filter.value"
+                                                        :filter="filter"/>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-6">
                         <div class="btn-group pull-right" role="group" aria-label="Basic example">
@@ -99,14 +108,18 @@
 </template>
 
 <script>
+  import {mapGetters} from 'vuex';
+  import axios from "axios";
+  import _ from "lodash";
   import FilterComponent from '../components/home/FilterComponent';
   import SchoolCard from '../components/home/SchoolCard';
-  import axios from "axios";
   import NoDataFoundComponent from '../components/home/NoDataFoundComponent';
+  import AppliedFilterComponent from '../components/home/AppliedFilterComponent';
+  import store from '../store';
 
   export default {
     name: "HomePage",
-    components: {NoDataFoundComponent, SchoolCard, FilterComponent},
+    components: {AppliedFilterComponent, NoDataFoundComponent, SchoolCard, FilterComponent},
     data() {
       return {
         universities: null,
@@ -120,8 +133,11 @@
           sortKey: "_score",
           sortDirection: ""
         },
-        searchText: ""
+        searchText: "",
       }
+    },
+    computed: {
+      ...mapGetters("filterStore", ["filters", "isFilterUpdated"]),
     },
     mounted() {
       if (this.$route.query.sort_key && this.$route.query.sort_key !== this.sorting.sortKey) {
@@ -135,9 +151,20 @@
       this.getUniversities();
     },
     watch: {
+      isFilterUpdated() {
+        if (this.isFilterUpdated) {
+          this.appliedFilters = _.flatMapDeep(this.filters, item => {
+            return item;
+          });
+          this.getUniversities();
+        }
+      },
       searchText() {
         if (this.$route.query.search_text !== this.searchText)
           this.updateRouter();
+      },
+      $route(to) {
+        console.log(to);
       }
     },
     methods: {
@@ -159,10 +186,16 @@
         if (this.$route.query.search_text) {
           queryParams.search_text = this.$route.query.search_text;
         }
+        _.each(this.filters, (filter, key) => {
+          queryParams[key] = _.map(filter, (item) => {
+            return item.value
+          })
+        });
         axios.get("https://run.mocky.io/v3/a1f1748f-bffb-4f55-9fcc-be7ca3f369e1", {
           params: queryParams
         })
           .then(response => {
+            store.dispatch("filterStore/resetFilterChangeFlag");
             this.isLoading = 0;
             if (response.data) {
               const responseData = response.data;
@@ -174,6 +207,7 @@
             }
           })
           .catch(error => {
+            store.dispatch("filterStore/resetFilterChangeFlag");
             this.isLoading = 0;
             console.log(error);
           });

@@ -132,7 +132,8 @@
         }
         let query = {
           "key": this.filterValue,
-          "value": this.filter.value
+          "value": this.filter.value,
+          "name": this.filter.name
         };
         if (this.selectedValue) {
           this.isActionEnabled = true;
@@ -155,9 +156,9 @@
         return newValue.toLowerCase() + "_" + this.index;
       },
       checkFilterAlreadyApplied() {
-        if (this.filters[this.filterValue]&&this.filters[this.filterValue].length) {
-          return _.findIndex(this.filters[this.filterValue], value => {
-            return this.filter.value === value;
+        if (this.filters[this.filterValue] && this.filters[this.filterValue].length) {
+          return _.findIndex(this.filters[this.filterValue], item => {
+            return this.filter.value === item.value;
           });
         }
         return -1;

@@ -1942,3 +1942,56 @@ h6 {
 .color-gray {
     color: #b7b7b7;
 }
+
+.applied-filters {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.applied-filters .filter-items {
+    margin: 0;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.applied-filters .filter-items .filter-title {
+    font-size: 12px;
+    line-height: 15px;
+    margin-right: 1rem;
+    color: #3c4858 !important;
+    font-weight: 500 !important;
+}
+
+.applied-filters .filter-items .filter-item-label {
+    background-color: #fff;
+    border: 1px solid #e6e6e6;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 15px;
+    color: #333;
+    padding: 0.3rem 0.5rem;
+    margin: 0.3rem;
+    transition: background-color .2 ease;
+    box-sizing: border-box;
+    display: flex;
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+    align-items: center;
+}
+
+.applied-filters .filter-items .filter-item-label i {
+    margin-left: 0.5rem;
+    margin-top: 1px;
+    font-weight: 600;
+    -webkit-font-smoothing: antialiased;
+    font-style: normal;
+    font-feature-settings: normal;
+    font-variant: normal;
+    line-height: 1;
+    text-transform: none;
+}
