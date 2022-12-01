@@ -39,7 +39,9 @@ export default {
   },
   mutations: {
     clearFilters(state) {
-      state.filters = [];
+      Vue.set(state, 'filters', {});
+      Vue.set(state, 'isFilterUpdated', true);
+      Vue.set(state, 'filtersLastModified', Date.now());
     },
     setFilters(state, filter) {
       if (state.filters[filter.key]) {

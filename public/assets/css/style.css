@@ -1995,3 +1995,17 @@ h6 {
     line-height: 1;
     text-transform: none;
 }
+
+.applied-filters .clear-filters{
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 15px;
+    -webkit-text-decoration-line: underline;
+    text-decoration-line: underline;
+    color: #000;
+    margin: 0.6rem;
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+}

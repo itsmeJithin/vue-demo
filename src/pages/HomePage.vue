@@ -41,12 +41,16 @@
                     <div class="col-6">
                         <div class="applied-filters">
                             <div class="filter-items">
-                                <div class="filter-title">
+                                <div class="filter-title" v-if="appliedFilters.length>0">
                                     Filters:
                                 </div>
                                 <AppliedFilterComponent v-for="filter in appliedFilters"
                                                         :key="filter.value"
                                                         :filter="filter"/>
+                                <div class="clear-filters" @click.prevent="clearAllFilters()"
+                                     v-if="appliedFilters.length>0">
+                                    Clear all
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -239,6 +243,9 @@
       searchNow() {
         if (this.searchText)
           this.getUniversities(true);
+      },
+      clearAllFilters() {
+        store.dispatch("filterStore/resetFilters");
       },
       async prepareAppliedFilters() {
         const flatFilters = [];
