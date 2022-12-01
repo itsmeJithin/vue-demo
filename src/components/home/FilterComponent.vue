@@ -29,7 +29,7 @@
     },
     methods: {
       async getFilters() {
-        axios.get("https://run.mocky.io/v3/fadaaaf3-c582-4091-8553-b3192de7a5cf")
+        axios.get("https://run.mocky.io/v3/58f33514-6d76-4fc1-b140-57d7ab720d83")
           .then(response => {
             if (response.data) {
               this.filters = response.data;

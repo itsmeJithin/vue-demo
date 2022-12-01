@@ -1507,6 +1507,11 @@ h6 {
     left: 5px;
 }
 
+.search-bar .search-input:focus-visible {
+    border: none !important;
+    outline: none !important;
+}
+
 .clear-icon-container {
     width: 3rem;
     display: flex;

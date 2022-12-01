@@ -11,6 +11,8 @@
             <FilterCategoryItem v-for="(filter,index) in category.filterItems"
                                 :key="'category-'+index"
                                 :filter="filter"
+                                :filter-value="category.value"
+                                :child-filter-value="category.childValue && category.childValue!==undefined?category.childValue:''"
                                 :index="index"
                                 :category-name="category.name"
                                 :is-multi-select-enabled="category.isMultiSelectEnabled"/>
