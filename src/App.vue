@@ -1,8 +1,8 @@
 <template>
     <div id="app">
         <HeaderComponent/>
-        <div class="main p-3">
-            <div class="container">
+        <div :class="currentMenuCode==='HOME'?'main p-3':'main-margin-less'">
+            <div :class="currentMenuCode==='HOME'?'container':'container-no-margin'">
                 <component :is="dynamicComponent"/>
             </div>
         </div>
@@ -23,6 +23,7 @@
     data() {
       return {
         dynamicComponent: HomePage,
+        currentMenuCode: "HOME"
       }
     },
     computed: {
@@ -45,10 +46,12 @@
           const {code: menuCode} = data;
           switch (menuCode) {
             case "HOME": {
+              this.currentMenuCode = "HOME";
               this.dynamicComponent = HomePage;
               break;
             }
             case "UNIVERSITY_DETAILS":
+              this.currentMenuCode = "UNIVERSITY_DETAILS";
               this.dynamicComponent = UniversityDetailsPage;
               break;
             default:

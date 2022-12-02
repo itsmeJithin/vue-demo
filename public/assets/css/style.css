@@ -99,6 +99,18 @@ h6 {
     flex-direction: column;
 }
 
+.main-margin-less {
+    margin-top: 4.75rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.container-no-margin {
+    background: #fff;
+    margin-left: -1rem;
+    margin-right: -1rem;
+}
+
 #main {
     margin-top: 5.5rem;
     padding: 20px 30px;
@@ -394,7 +406,18 @@ h6 {
     color: #51678f;
 }
 
+.breadcrumb-item.non-active {
+    font-size: 12px;
+}
+
 .breadcrumb .breadcrumb-item:nth-child(even)::before {
+    color: #899bbd;
+    font-weight: 500;
+    font-family: 'FontAwesome';
+    content: "\f054";
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
     color: #899bbd;
     font-weight: 500;
     font-family: 'FontAwesome';
@@ -1996,7 +2019,7 @@ h6 {
     text-transform: none;
 }
 
-.applied-filters .clear-filters{
+.applied-filters .clear-filters {
     font-style: normal;
     font-weight: 400;
     font-size: 12px;
@@ -2008,4 +2031,35 @@ h6 {
     cursor: pointer;
     -webkit-user-select: none;
     user-select: none;
+}
+
+.page-container {
+    width: 100%;
+    padding: 15px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+@media (min-width: 1280px) {
+    .page-container {
+        max-width: 1280px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .page-container {
+        max-width: 1024px;
+    }
+}
+
+@media (min-width: 768px) {
+    .container {
+        max-width: 768px;
+    }
+}
+
+@media (min-width: 640px) {
+    .container {
+        max-width: 640px;
+    }
 }
