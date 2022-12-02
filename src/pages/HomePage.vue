@@ -1,23 +1,25 @@
 <template>
-    <div>
-        <div class="row">
-            <div class="col-12">
-                <div class="pagetitle">
-                    <nav>
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item">
-                                <a href="/">
-                                    <i class="fa fa-home"></i>
-                                </a>
-                            </li>
-                            <li class="breadcrumb-item active">Explore Schools</li>
-                        </ol>
-                    </nav>
-                </div>
-                <div class="input-group">
-                    <input class="form-control border-end-0 border search-box" type="text" id="example-search-input"
-                           placeholder="Search for an institute or a course" v-model="searchText" autocomplete="off">
-                    <span class="input-group-append">
+    <div class="main p-3">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="pagetitle">
+                        <nav>
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item">
+                                    <a href="/">
+                                        <i class="fa fa-home"></i>
+                                    </a>
+                                </li>
+                                <li class="breadcrumb-item active">Explore Schools</li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <div class="input-group">
+                        <input class="form-control border-end-0 border search-box" type="text" id="example-search-input"
+                               placeholder="Search for an institute or a course" v-model="searchText"
+                               autocomplete="off">
+                        <span class="input-group-append">
                     <button class="btn btn-outline-secondary bg-white border-start-0 border-end-0 input-group-btn-white border ms-n5"
                             type="button" @click.prevent="clearText()">
                         <i class="fa" :class="this.searchText?'fa-times':''"></i>
@@ -27,88 +29,88 @@
                         <i class="fa fa-search" :class="!this.searchText?'color-gray':''"></i>
                     </button>
                 </span>
+                    </div>
                 </div>
-            </div>
-            <div class="col-12 mt-2">
-                <span class="fs-13" v-if="isLoading===1"><b>Looking for institutes...</b></span>
-                <span class="fs-13" v-else>You found <b>{{totalRecords}}</b> institutes and <b>{{totalCourses}}</b> courses</span>
-            </div>
-            <div class="col-12">
-                <hr/>
-            </div>
-            <div class="col-12">
-                <div class="row">
-                    <div class="col-6">
-                        <div class="applied-filters">
-                            <div class="filter-items">
-                                <div class="filter-title" v-if="appliedFilters.length>0">
-                                    Filters:
-                                </div>
-                                <AppliedFilterComponent v-for="filter in appliedFilters"
-                                                        :key="filter.value"
-                                                        :filter="filter"/>
-                                <div class="clear-filters" @click.prevent="clearAllFilters()"
-                                     v-if="appliedFilters.length>0">
-                                    Clear all
+                <div class="col-12 mt-2">
+                    <span class="fs-13" v-if="isLoading===1"><b>Looking for institutes...</b></span>
+                    <span class="fs-13" v-else>You found <b>{{totalRecords}}</b> institutes and <b>{{totalCourses}}</b> courses</span>
+                </div>
+                <div class="col-12">
+                    <hr/>
+                </div>
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="applied-filters">
+                                <div class="filter-items">
+                                    <div class="filter-title" v-if="appliedFilters.length>0">
+                                        Filters:
+                                    </div>
+                                    <AppliedFilterComponent v-for="filter in appliedFilters"
+                                                            :key="filter.value"
+                                                            :filter="filter"/>
+                                    <div class="clear-filters" @click.prevent="clearAllFilters()"
+                                         v-if="appliedFilters.length>0">
+                                        Clear all
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="btn-group pull-right" role="group" aria-label="Basic example">
-                            <button type="button" class="btn btn-sm btn-outline-secondary btn-normal"
-                                    :class="sorting.sortKey==='_score'?'active':''"
-                                    @click.prevent="toggleSorting('_score')">
-                                Best Match
-                            </button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary btn-normal btn-border"
-                                    :class="sorting.sortKey==='best_rank'?'active':''"
-                                    @click.prevent="toggleSorting('best_rank')">
-                                Best Rank
-                            </button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary btn-normal"
-                                    :class="sorting.sortKey==='acceptance_rate'?'active':''"
-                                    @click.prevent="toggleSorting('acceptance_rate')">
-                                Acceptance Rate
-                                <i class="fa fa-sort ms-1" :class="getSortingIcon('acceptance_rate')"></i>
-                            </button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary btn-normal"
-                                    :class="sorting.sortKey==='tuition_fee'?'active':''"
-                                    @click.prevent="toggleSorting('tuition_fee')">
-                                Tuition Fee
-                                <i class="fa fa-sort ms-1" :class="getSortingIcon('tuition_fee')"></i>
-                            </button>
+                        <div class="col-6">
+                            <div class="btn-group pull-right" role="group" aria-label="Basic example">
+                                <button type="button" class="btn btn-sm btn-outline-secondary btn-normal"
+                                        :class="sorting.sortKey==='_score'?'active':''"
+                                        @click.prevent="toggleSorting('_score')">
+                                    Best Match
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary btn-normal btn-border"
+                                        :class="sorting.sortKey==='best_rank'?'active':''"
+                                        @click.prevent="toggleSorting('best_rank')">
+                                    Best Rank
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary btn-normal"
+                                        :class="sorting.sortKey==='acceptance_rate'?'active':''"
+                                        @click.prevent="toggleSorting('acceptance_rate')">
+                                    Acceptance Rate
+                                    <i class="fa fa-sort ms-1" :class="getSortingIcon('acceptance_rate')"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary btn-normal"
+                                        :class="sorting.sortKey==='tuition_fee'?'active':''"
+                                        @click.prevent="toggleSorting('tuition_fee')">
+                                    Tuition Fee
+                                    <i class="fa fa-sort ms-1" :class="getSortingIcon('tuition_fee')"></i>
+                                </button>
+                            </div>
                         </div>
-                    </div>
 
+                    </div>
                 </div>
-            </div>
-            <div class="col-12">
-                <hr/>
-            </div>
-            <div class="col-12">
-                <div class="filter-view">
-                    <!--  Filter component -->
-                    <FilterComponent/>
-                    <div class="col ms-4">
-                        <div class="pt-1-5">
-                            <template v-if="isLoading===0">
-                                <!--  University card -->
-                                <SchoolCard v-for="(university,index) in universities" :university="university"
-                                            :key="'university_'+index"/>
-                                <!--  No data card -->
-                                <NoDataFoundComponent v-if="!universities||universities.length===0"/>
-                            </template>
-                            <!--  Loader box -->
-                            <div class="loader-box" v-if="isLoading===1">
-                                <span class="loader"></span>
+                <div class="col-12">
+                    <hr/>
+                </div>
+                <div class="col-12">
+                    <div class="filter-view">
+                        <!--  Filter component -->
+                        <FilterComponent/>
+                        <div class="col ms-4">
+                            <div class="pt-1-5">
+                                <template v-if="isLoading===0">
+                                    <!--  University card -->
+                                    <SchoolCard v-for="(university,index) in universities" :university="university"
+                                                :key="'university_'+index"/>
+                                    <!--  No data card -->
+                                    <NoDataFoundComponent v-if="!universities||universities.length===0"/>
+                                </template>
+                                <!--  Loader box -->
+                                <div class="loader-box" v-if="isLoading===1">
+                                    <span class="loader"></span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
 </template>
 

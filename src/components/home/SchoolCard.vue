@@ -1,5 +1,5 @@
 <template>
-    <div class="card p-3" @click.prevent="viewUniversityDetails">
+    <div class="card p-3 cursor-pointer" @click.prevent="viewUniversityDetails">
         <div class="school-container">
             <div class="school-container-header">
                 <div class="left">

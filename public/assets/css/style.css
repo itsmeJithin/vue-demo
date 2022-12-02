@@ -100,15 +100,14 @@ h6 {
 }
 
 .main-margin-less {
-    margin-top: 4.75rem;
+    margin-top: 4rem;
     display: flex;
     flex-direction: column;
+    max-width: 100vw;
 }
 
 .container-no-margin {
     background: #fff;
-    margin-left: -1rem;
-    margin-right: -1rem;
 }
 
 #main {
@@ -1239,6 +1238,10 @@ h6 {
     font-size: 17px;
 }
 
+.fs-18 {
+    font-size: 18px;
+}
+
 .btn-normal {
     background-color: #fff;
     font-size: 13px !important;
@@ -1618,22 +1621,22 @@ h6 {
     text-align: center;
 }
 
-.container-header .location i.map {
+.location i.map {
     font-size: 1rem;
     color: #b1b1b1;
     line-height: 1.1rem;
     margin-right: 0.3rem;
 }
 
-.container-header .location i.circle {
+.location i.circle {
     font-size: .6rem;
     color: #b1b1b1;
     line-height: 1.1rem;
     margin-right: 0.3rem;
 }
 
-.container-header .location .location-city,
-.container-header .location .location-country {
+.location .location-city,
+.location .location-country {
     display: flex;
     align-items: center;
     margin-bottom: 0.5rem;
@@ -2033,33 +2036,42 @@ h6 {
     user-select: none;
 }
 
-.page-container {
-    width: 100%;
-    padding: 15px;
-    margin-right: auto;
-    margin-left: auto;
+.w-4\/6 {
+    width: 66.666667% !important;;
 }
 
-@media (min-width: 1280px) {
-    .page-container {
-        max-width: 1280px;
-    }
+.w-2\/6 {
+    width: 33.333333% !important;;
 }
 
-@media (min-width: 1024px) {
-    .page-container {
-        max-width: 1024px;
-    }
+.display-flex {
+    display: flex;
 }
 
-@media (min-width: 768px) {
-    .page-container {
-        max-width: 768px;
-    }
+.university-logo {
+    max-width: 10rem;
+    margin-right: 1rem;
 }
 
-@media (min-width: 640px) {
-    .page-container {
-        max-width: 640px;
-    }
+.university-title {
+    color: #2b2d38;
+    line-height: 36px !important;
+    font-size: 24px !important;
+}
+
+.w-70 {
+    width: 70%;
+}
+
+.university-img{
+    max-width: 100%;
+    height: auto;
+    vertical-align: middle;
+    border-style: none;
+}
+
+.university-header{
+    padding-top: 1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
 }

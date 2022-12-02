@@ -1,11 +1,7 @@
 <template>
     <div id="app">
         <HeaderComponent/>
-        <div :class="currentMenuCode==='HOME'?'main p-3':'main-margin-less'">
-            <div :class="currentMenuCode==='HOME'?'container':'container-no-margin'">
-                <component :is="dynamicComponent"/>
-            </div>
-        </div>
+        <component :is="dynamicComponent"/>
     </div>
 </template>
 
