@@ -2053,13 +2053,13 @@ h6 {
 }
 
 @media (min-width: 768px) {
-    .container {
+    .page-container {
         max-width: 768px;
     }
 }
 
 @media (min-width: 640px) {
-    .container {
+    .page-container {
         max-width: 640px;
     }
 }
