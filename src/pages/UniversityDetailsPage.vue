@@ -13,7 +13,11 @@
                                                 <i class="fa fa-home"></i>
                                             </a>
                                         </li>
-                                        <li class="breadcrumb-item non-active">Explore Schools</li>
+                                        <li class="breadcrumb-item non-active">
+                                            <a href="/">
+                                                Explore Schools
+                                            </a>
+                                        </li>
                                         <li class="breadcrumb-item active">
                                             {{universityDetails?universityDetails.name:''}}
                                         </li>

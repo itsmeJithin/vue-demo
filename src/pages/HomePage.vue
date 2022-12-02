@@ -15,21 +15,23 @@
                             </ol>
                         </nav>
                     </div>
+                    <!-- Search box  -->
                     <div class="input-group">
                         <input class="form-control border-end-0 border search-box" type="text" id="example-search-input"
                                placeholder="Search for an institute or a course" v-model="searchText"
                                autocomplete="off">
                         <span class="input-group-append">
-                    <button class="btn btn-outline-secondary bg-white border-start-0 border-end-0 input-group-btn-white border ms-n5"
-                            type="button" @click.prevent="clearText()">
-                        <i class="fa" :class="this.searchText?'fa-times':''"></i>
-                    </button>
-                    <button class="btn btn-outline-secondary bg-white border-start-0 input-group-btn-white border ms-n5"
-                            type="button" @click.prevent="searchNow()">
-                        <i class="fa fa-search" :class="!this.searchText?'color-gray':''"></i>
-                    </button>
-                </span>
+                            <button class="btn btn-outline-secondary bg-white border-start-0 border-end-0 input-group-btn-white border ms-n5"
+                                    type="button" @click.prevent="clearText()">
+                                <i class="fa" :class="this.searchText?'fa-times':''"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary bg-white border-start-0 input-group-btn-white border ms-n5"
+                                    type="button" @click.prevent="searchNow()">
+                                <i class="fa fa-search" :class="!this.searchText?'color-gray':''"></i>
+                            </button>
+                        </span>
                     </div>
+                    <!-- Search box end here -->
                 </div>
                 <div class="col-12 mt-2">
                     <span class="fs-13" v-if="isLoading===1"><b>Looking for institutes...</b></span>
@@ -46,9 +48,11 @@
                                     <div class="filter-title" v-if="appliedFilters.length>0">
                                         Filters:
                                     </div>
+                                    <!-- Applied filters list -->
                                     <AppliedFilterComponent v-for="filter in appliedFilters"
                                                             :key="filter.value"
                                                             :filter="filter"/>
+                                    <!-- Applied filters list end here -->
                                     <div class="clear-filters" @click.prevent="clearAllFilters()"
                                          v-if="appliedFilters.length>0">
                                         Clear all
@@ -57,6 +61,7 @@
                             </div>
                         </div>
                         <div class="col-6">
+                            <!-- Sorting components -->
                             <div class="btn-group pull-right" role="group" aria-label="Basic example">
                                 <button type="button" class="btn btn-sm btn-outline-secondary btn-normal"
                                         :class="sorting.sortKey==='_score'?'active':''"
@@ -81,6 +86,7 @@
                                     <i class="fa fa-sort ms-1" :class="getSortingIcon('tuition_fee')"></i>
                                 </button>
                             </div>
+                            <!-- Sorting components ends here-->
                         </div>
 
                     </div>
@@ -99,6 +105,11 @@
                                     <SchoolCard v-for="(university,index) in universities" :university="university"
                                                 :key="'university_'+index"/>
                                     <!--  No data card -->
+                                    <div class="display-flex result-status">
+                                        Showing &nbsp;<b>{{getStartIndex()}}</b>&nbsp;-&nbsp;<b>{{getEndIndex()}}</b>&nbsp;of
+                                        &nbsp;<b>{{totalRecords}}</b>&nbsp;
+                                        institutes.
+                                    </div>
                                     <NoDataFoundComponent v-if="!universities||universities.length===0"/>
                                 </template>
                                 <!--  Loader box -->
@@ -131,7 +142,7 @@
       return {
         universities: null,
         appliedFilters: [],
-        currentPage: 0,
+        currentPage: 1,
         totalRecords: 0,
         recordsPerPage: 17,
         totalCourses: 0,
@@ -178,6 +189,8 @@
       async getUniversities(isUpdateRouter = false) {
         this.isLoading = 1;
         const queryParams = {};
+        queryParams.limit = this.recordsPerPage;
+        queryParams.page = this.currentPage;
         if (this.sorting.sortKey) {
           queryParams.sort_key = this.sorting.sortKey;
         } else {
@@ -249,6 +262,10 @@
       clearAllFilters() {
         store.dispatch("filterStore/resetFilters");
       },
+      /**
+       * finding already applied filters from the url query params and storing that filters to vuex
+       * @author Jithin Vijayan
+       */
       async prepareAppliedFilters() {
         const flatFilters = [];
         await _.each(this.availableFilters, category => {
@@ -300,6 +317,28 @@
           else
             this.getUniversities();
         }
+      },
+      /**
+       * calculating start index of this results
+       *
+       * @author Jithin Vijayan
+       * @returns {number}
+       */
+      getStartIndex() {
+        return ((this.currentPage - 1) * this.recordsPerPage) + 1;
+      },
+      /**
+       * calculating end index of this results
+       *
+       * @author Jithin Vijayan
+       * @returns {number}
+       */
+      getEndIndex() {
+        const recordsStartsFrom = ((this.currentPage - 1) * this.recordsPerPage) + 1;
+        let recordsEndsAt = recordsStartsFrom + this.recordsPerPage - 1;
+        if (recordsEndsAt > this.totalRecords)
+          recordsEndsAt = this.totalRecords;
+        return recordsEndsAt;
       }
     }
   }
