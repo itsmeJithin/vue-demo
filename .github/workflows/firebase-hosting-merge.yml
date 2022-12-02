@@ -14,8 +14,8 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16
-      - name: Install Global Dependencies
-        run: npm install -g @vue/cli
+      - name: Installing packages
+        run: npm install
       - run: npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
